@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "src/**/*",
+    "client/**/*"
+  ],
+  "ext": "ts",
+  "execMap": {
+    "ts": "node --require ts-node/register --require tsconfig-paths/register --require reflect-metadata"
+  }
+}
