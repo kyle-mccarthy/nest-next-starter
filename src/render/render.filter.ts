@@ -1,6 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { RequestHandler } from '@server/render/types';
-import { parse } from 'url';
 
 @Catch()
 class RenderFilter implements ExceptionFilter {
@@ -16,11 +15,12 @@ class RenderFilter implements ExceptionFilter {
    * @param err
    * @param ctx
    */
-  public catch(err: any, ctx: ArgumentsHost) {
-    const [ req, res ] = ctx.getArgs();
+  public async catch(err: any, ctx: ArgumentsHost) {
+    const [ req, reply ] = ctx.getArgs();
 
-    const parsedUrl = parse(req.url, true);
-    return this.requestHandler(req, res, parsedUrl);
+    await this.requestHandler(req.raw, reply.res);
+
+    reply.finished = true;
   }
 }
 

@@ -21,6 +21,8 @@
     "@babel/core": "^7.1.0",
     "@nestjs/common": "^5.3.9",
     "@nestjs/core": "^5.3.10",
+    "fastify": "^1.12.1",
+    "fastify-formbody": "^2.0.1",
     "next": "^7.0.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",

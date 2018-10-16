@@ -6,7 +6,7 @@ import { Renderer, RequestHandler } from './types';
 class RenderService {
   private requestHandler?: RequestHandler;
   private renderer?: Renderer;
-  private res?: any;
+  private reply?: any;
   private req?: any;
 
   /**
@@ -44,9 +44,9 @@ class RenderService {
    * @param req
    * @param res
    */
-  public next(req: any, res: any) {
+  public next(req: any, reply: any) {
     this.req = req;
-    this.res = res;
+    this.reply = reply;
   }
 
   /**
@@ -55,20 +55,21 @@ class RenderService {
    * @param server
    */
   public bindHttpServer(server: HttpServer) {
-    server.render = (_: any, view: string, options: any) => {
+    server.render = async (_: any, view: string, options: any) => {
       const renderer = this.getRenderer();
 
-      if (this.req && this.res && renderer) {
-        return renderer(this.req, this.res, `/views/${view}`, options);
+      if (this.req && this.reply && renderer) {
+        await renderer(this.req, this.reply, `/views/${view}`, options);
+        this.reply.finished = true;
       } else if (!this.req) {
         throw new Error('RenderService: req is not defined.');
-      } else if (!this.res) {
-        throw new Error('RenderService: res is not defined.');
+      } else if (!this.reply) {
+        throw new Error('RenderService: reply is not defined.');
       } else if (!renderer) {
         throw new Error('RenderService: renderer is not set.');
+      } else {
+        throw new Error('RenderService: failed to render');
       }
-
-      throw new Error('RenderService: failed to render');
     };
   }
 }

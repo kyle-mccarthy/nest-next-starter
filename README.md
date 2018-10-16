@@ -1,4 +1,4 @@
-# Nest.js and Next.js Example/Starter App
+# Nest.js and Next.js Example/Starter App (Fastify)
 
 ## Getting Started
 
@@ -18,6 +18,7 @@ handles the SSR of React, while Nest handles the custom server, routing, etc...
 - Nest.js (Custom Routing)
 - Typescript
 - Nodemon
+- Fastify
 
 ## How does it work?
 

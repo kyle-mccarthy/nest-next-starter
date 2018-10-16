@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFactory } from '@nestjs/core';
 import RenderFilter from '@server/render/render.filter';
 import RenderMiddleware from '@server/render/render.middleware';
 import RenderService from '@server/render/render.service';
@@ -11,7 +11,7 @@ async function bootstrap() {
 
   await app.prepare();
 
-  const server = await NestFactory.create(AppModule);
+  const server = await NestFactory.create(AppModule, new FastifyAdapter());
 
   const renderService = server.get(RenderService);
 
