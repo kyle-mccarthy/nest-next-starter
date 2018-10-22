@@ -1,13 +1,17 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { RequestHandler } from '@server/render/types';
-import { parse } from 'url';
+import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
+import { ErrorRenderer, RequestHandler } from '@server/render/types';
+import { parse as parseUrl } from 'url';
 
 @Catch()
 class RenderFilter implements ExceptionFilter {
   private readonly requestHandler: RequestHandler;
+  private readonly errorRenderer: ErrorRenderer;
+  private readonly logger: Logger;
 
-  constructor(requestHandler: RequestHandler) {
+  constructor(requestHandler: RequestHandler, errorRenderer: ErrorRenderer) {
     this.requestHandler = requestHandler;
+    this.logger = new Logger();
+    this.errorRenderer = errorRenderer;
   }
 
   /**
@@ -16,11 +20,18 @@ class RenderFilter implements ExceptionFilter {
    * @param err
    * @param ctx
    */
-  public catch(err: any, ctx: ArgumentsHost) {
-    const [ req, res ] = ctx.getArgs();
+  public async catch(err: any, ctx: ArgumentsHost) {
+    const [req, res] = ctx.getArgs();
 
-    const parsedUrl = parse(req.url, true);
-    return this.requestHandler(req, res, parsedUrl);
+    if (!res.headersSent) {
+      if (err.response === undefined) {
+        const { pathname, query } = parseUrl(req.url, true);
+        this.logger.error(err.message, err.stack);
+        await this.errorRenderer(err, req, res, pathname, query);
+      } else {
+        await this.requestHandler(req, res);
+      }
+    }
   }
 }
 

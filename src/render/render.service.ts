@@ -1,11 +1,12 @@
 import { HttpServer, Injectable } from '@nestjs/common';
 import { parse } from 'url';
-import { Renderer, RequestHandler } from './types';
+import { ErrorRenderer, Renderer, RequestHandler } from './types';
 
 @Injectable()
 class RenderService {
   private requestHandler?: RequestHandler;
   private renderer?: Renderer;
+  private errorRenderer?: ErrorRenderer;
   private res?: any;
   private req?: any;
 
@@ -39,6 +40,19 @@ class RenderService {
     return this.renderer;
   }
 
+  /**
+   * Set nextjs error renderer
+   */
+  public setErrorRenderer(errorRenderer: ErrorRenderer) {
+    this.errorRenderer = errorRenderer;
+  }
+
+  /**
+   * Get nextjs error renderer
+   */
+  public getErrorRenderer(): ErrorRenderer | undefined {
+    return this.errorRenderer;
+  }
   /**
    * Set the current req and res
    * @param req

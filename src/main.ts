@@ -17,11 +17,17 @@ async function bootstrap() {
 
   renderService.setRequestHandler(app.getRequestHandler());
   renderService.setRenderer(app.render.bind(app));
+  renderService.setErrorRenderer(app.renderError.bind(app));
 
   renderService.bindHttpServer(server.getHttpAdapter());
 
-  server.use((new RenderMiddleware(renderService)).resolve());
-  server.useGlobalFilters(new RenderFilter(renderService.getRequestHandler()!));
+  server.use(new RenderMiddleware(renderService).resolve());
+  server.useGlobalFilters(
+    new RenderFilter(
+      renderService.getRequestHandler()!,
+      renderService.getErrorRenderer()!
+    )
+  );
 
   await server.listen(3000);
 }
